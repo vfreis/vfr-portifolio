@@ -1,1 +1,1 @@
-
+<div class="section-shell lab reveal"><article><span>PROJECT LAB</span><strong>Superstore Sales Analytics</strong><p>Python, SQL, window functions and customer segmentation.</p></article><article><span>PROJECT LAB</span><strong>RFM Customer Segmentation</strong><p>Recency, frequency, monetary analysis and segment visualization.</p></article></div>
