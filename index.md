@@ -13,8 +13,9 @@ permalink: /
 <meta property="og:type" content="website">
 <meta property="og:title" content="Vinicios Falqueiro Reis — Data Engineer + Applied AI">
 <meta property="og:description" content="Cloud data platforms, distributed pipelines, automation and applied AI backed by measurable engineering outcomes.">
-<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:card" content="summary">
 <title>Vinicios Falqueiro Reis — Data Engineer + Applied AI</title>
+<link rel="icon" href="./assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
