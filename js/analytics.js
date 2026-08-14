@@ -1,7 +1,8 @@
 (()=>{
   const STORAGE_KEY='vfr_portfolio_analytics_v1';
   const ENDPOINT=window.PORTFOLIO_ANALYTICS_ENDPOINT||'';
-  const sessionId=sessionStorage.getItem('vfr_session_id')||crypto?.randomUUID?.()||`${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  const generatedId=globalThis.crypto?.randomUUID?.()||`${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  const sessionId=sessionStorage.getItem('vfr_session_id')||generatedId;
   sessionStorage.setItem('vfr_session_id',sessionId);
 
   function readStore(){
@@ -15,11 +16,16 @@
     try{localStorage.setItem(STORAGE_KEY,JSON.stringify(store))}catch{}
   }
 
+  function referrerHost(){
+    if(!document.referrer)return 'direct';
+    try{return new URL(document.referrer,location.href).hostname||'direct'}catch{return 'unknown'}
+  }
+
   function send(event,payload={}){
     const record={
       event,
       page:location.pathname||'/',
-      referrer:document.referrer?new URL(document.referrer,location.href).hostname:'direct',
+      referrer:referrerHost(),
       session_id:sessionId,
       ...payload,
     };
@@ -36,7 +42,7 @@
   send('portfolio_view',{view:document.body.dataset.view||'recruiter'});
 
   document.addEventListener('click',event=>{
-    const target=event.target.closest('[data-track]');
+    const target=event.target.closest?.('[data-track]');
     if(!target)return;
     send(target.dataset.track,{
       label:target.dataset.trackLabel||target.textContent.trim().slice(0,80),
