@@ -50,7 +50,10 @@ def local_path(page, value):
 index = require("index.html")
 resume = require("resume/index.html")
 require("js/app.js")
+require("js/analytics.js")
+require("css/case-studies.css")
 require("assets/favicon.svg")
+require("assets/social-card.svg")
 require(".nojekyll")
 
 pages = [index, resume]
@@ -93,11 +96,23 @@ required_markers = [
     "10+ TB",
     "Dermaly AI",
     "aws_data_lakehouse_pipeline",
+    "Why hire me",
+    "Problem → architecture → decisions → evidence",
+    "Interactive architecture",
+    "AI requires evaluation",
+    "data-track=\"resume_click\"",
+    "./js/analytics.js",
+    "./assets/social-card.svg",
     "./resume/index.html",
 ]
 for marker in required_markers:
     if marker not in index_text:
         fail(f"required portfolio marker missing: {marker}")
+
+analytics_text = (ROOT / "js/analytics.js").read_text(encoding="utf-8") if (ROOT / "js/analytics.js").exists() else ""
+for event in ["portfolio_view", "project_view", "dataLayer", "PORTFOLIO_ANALYTICS_ENDPOINT"]:
+    if event not in analytics_text:
+        fail(f"analytics contract missing: {event}")
 
 resume_text = resume.read_text(encoding="utf-8") if resume.exists() else ""
 for marker in ["Professional Summary", "Cloud Data Engineer", "Applied AI", "Print / Save PDF", "../index.html"]:
@@ -125,5 +140,7 @@ if ERRORS:
 print("Portfolio validation passed")
 print(" - architecture: pure static HTML/CSS/JavaScript")
 print(" - entrypoints: index.html, resume/index.html")
+print(" - recruiter proof: case studies, why-hire section, engineering principles")
+print(" - analytics: provider-ready funnel instrumentation")
 print(f" - CSS modules checked: {len(css_files)}")
 print(f" - unique section ids checked: {all_ids}")
