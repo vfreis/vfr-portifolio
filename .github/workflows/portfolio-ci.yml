@@ -22,8 +22,24 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Validate site structure
+      - name: Validate pure static site structure
         run: python scripts/validate_site.py
 
       - name: Validate JavaScript syntax
         run: node --check js/app.js
+
+      - name: Smoke test static entrypoints
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python -m http.server 8000 --bind 127.0.0.1 >/tmp/portfolio-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill ${SERVER_PID} 2>/dev/null || true' EXIT
+          for i in $(seq 1 20); do
+            if curl --fail --silent http://127.0.0.1:8000/index.html >/dev/null; then break; fi
+            sleep 0.25
+          done
+          curl --fail --silent http://127.0.0.1:8000/index.html | grep -Fq 'Vinicios Falqueiro Reis'
+          curl --fail --silent http://127.0.0.1:8000/resume/index.html | grep -Fq 'Professional Summary'
+          curl --fail --silent http://127.0.0.1:8000/js/app.js >/dev/null
+          curl --fail --silent http://127.0.0.1:8000/css/layout.css >/dev/null
