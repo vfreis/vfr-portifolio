@@ -96,13 +96,13 @@ required_markers = [
     "10+ TB",
     "Dermaly AI",
     "aws_data_lakehouse_pipeline",
-    "Why hire me",
+    "WHY HIRE ME",
     "Problem → architecture → decisions → evidence",
     "Interactive architecture",
     "AI requires evaluation",
     "data-track=\"resume_click\"",
     "./js/analytics.js",
-    "./assets/social-card.svg",
+    "social-card.svg",
     "./resume/index.html",
 ]
 for marker in required_markers:
