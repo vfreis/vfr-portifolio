@@ -38,7 +38,7 @@ jobs:
           set -Eeuo pipefail
           test -s assets/social-card.svg
           test -s css/case-studies.css
-          grep -Fq 'Why hire me' index.html
+          grep -Fq 'WHY HIRE ME' index.html
           grep -Fq 'Interactive architecture' index.html
           grep -Fq 'PORTFOLIO_ANALYTICS_ENDPOINT' js/analytics.js
           grep -Fq 'https://vfreis.github.io/vfr-portifolio/' index.html
