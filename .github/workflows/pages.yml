@@ -41,16 +41,21 @@ jobs:
           SERVER_PID=$!
           trap 'kill ${SERVER_PID} 2>/dev/null || true' EXIT
           for i in $(seq 1 20); do
-            if curl --fail --silent http://127.0.0.1:8000/index.html >/dev/null; then break; fi
+            if curl --fail --silent http://127.0.0.1:8000/index.html -o /tmp/portfolio-index.html; then break; fi
             sleep 0.25
           done
-          curl --fail --silent http://127.0.0.1:8000/index.html | grep -Fq 'Vinicios Falqueiro Reis'
-          curl --fail --silent http://127.0.0.1:8000/index.html | grep -Fq 'WHY HIRE ME'
-          curl --fail --silent http://127.0.0.1:8000/resume/index.html | grep -Fq 'Professional Summary'
-          curl --fail --silent http://127.0.0.1:8000/js/app.js >/dev/null
-          curl --fail --silent http://127.0.0.1:8000/js/analytics.js >/dev/null
-          curl --fail --silent http://127.0.0.1:8000/css/case-studies.css >/dev/null
-          curl --fail --silent http://127.0.0.1:8000/assets/social-card.svg >/dev/null
+          curl --fail --silent http://127.0.0.1:8000/resume/index.html -o /tmp/portfolio-resume.html
+          curl --fail --silent http://127.0.0.1:8000/js/app.js -o /tmp/portfolio-app.js
+          curl --fail --silent http://127.0.0.1:8000/js/analytics.js -o /tmp/portfolio-analytics.js
+          curl --fail --silent http://127.0.0.1:8000/css/case-studies.css -o /tmp/portfolio-cases.css
+          curl --fail --silent http://127.0.0.1:8000/assets/social-card.svg -o /tmp/portfolio-social.svg
+          grep -Fq 'Vinicios Falqueiro Reis' /tmp/portfolio-index.html
+          grep -Fq 'WHY HIRE ME' /tmp/portfolio-index.html
+          grep -Fq 'Professional Summary' /tmp/portfolio-resume.html
+          test -s /tmp/portfolio-app.js
+          test -s /tmp/portfolio-analytics.js
+          test -s /tmp/portfolio-cases.css
+          test -s /tmp/portfolio-social.svg
 
   deploy:
     needs: validate
