@@ -2,9 +2,19 @@
 
 Professional portfolio for **Vinicios Falqueiro Reis — Data Engineer + Applied AI & ML**.
 
-## Positioning
+## Architecture
 
-The site is designed as evidence of engineering maturity rather than a generic developer portfolio:
+The portfolio is now **pure static HTML + CSS + JavaScript**.
+
+- `index.html` is the production entrypoint.
+- `resume/index.html` is the resume page.
+- `css/`, `js/` and `assets/` are referenced with relative paths.
+- No Jekyll, Liquid, Markdown rendering, npm build, bundler or frontend framework is required.
+- `.nojekyll` explicitly disables GitHub Pages Jekyll processing.
+
+This means the downloaded repository can be previewed by double-clicking `index.html` in a browser. A local HTTP server is optional, not required.
+
+## Positioning
 
 - Data Engineering is the core discipline.
 - Applied AI & ML is presented through concrete production responsibilities.
@@ -19,24 +29,51 @@ The site is designed as evidence of engineering maturity rather than a generic d
 - Primary impact metrics: 10+ TB/month, -20% runtime, 95% automated workflows, -50% manual ingestion effort.
 - Secondary impact: +40% scheduling reliability, 15% cost savings, +25% data accuracy, +30% productivity, +20% operational efficiency.
 - AWS Data Lakehouse flagship case.
-- Dermaly Applied AI & ML case with multimodal inference, model evaluation, structured outputs and production integration.
+- Dermaly Applied AI & ML case.
 - Data Migration & File Profiling Toolkit.
-- Additional analytics/ML projects: Superstore segmentation and RFM segmentation.
+- Superstore and RFM analytics/ML project lab.
 - Full professional experience timeline.
-- Interactive technology atlas covering platforms, engineering, AI/ML, quality/operations and analytics.
-- Education, languages, remote/startup fit and engineering principles.
+- Technology evidence across platforms, engineering, AI/ML, quality/operations and analytics.
+- Native static resume with Print / Save PDF support.
 - Email, WhatsApp, LinkedIn and GitHub contact paths.
 
-## Stack
+## Local preview
 
-- Vanilla HTML
-- Vanilla CSS
-- Vanilla JavaScript
-- SVG/CSS visualizations
-- IntersectionObserver
-- requestAnimationFrame
-- No frontend framework
-- No charting library
+### Simplest
+
+Open `index.html` directly.
+
+### HTTP preview
+
+```bash
+python -m http.server 8000
+```
+
+Then open `http://localhost:8000/`.
+
+## Validation
+
+```bash
+python scripts/validate_site.py
+node --check js/app.js
+```
+
+CI verifies that:
+
+- pure static entrypoints exist;
+- no Liquid/Jekyll template syntax remains;
+- local HTML/CSS/JS links resolve;
+- duplicate IDs are rejected;
+- required portfolio evidence is present;
+- JavaScript syntax is valid.
+
+## Deployment
+
+Target: **GitHub Pages using GitHub Actions**.
+
+After the foundation PR is approved and merged to `main`, the Pages workflow publishes the repository as a static artifact. No compilation step is involved.
+
+A custom domain can be added later with a `CNAME` file once the final domain is chosen.
 
 ## Contact
 
@@ -44,7 +81,3 @@ The site is designed as evidence of engineering maturity rather than a generic d
 - WhatsApp: `+55 11 99340-8348`
 - LinkedIn: `linkedin.com/in/vfalqueiroreis`
 - GitHub: `github.com/vfreis`
-
-## Local preview
-
-Open `index.html` directly or serve the directory with a static HTTP server.
