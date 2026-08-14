@@ -1,0 +1,74 @@
+name: One-off switch to native GitHub Pages URL
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/switch-to-github-pages-url.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  switch-url:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Replace custom-domain references
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python - <<'PY'
+          from pathlib import Path
+
+          old_url = 'https://viniciosfalqueiro.dev/'
+          new_url = 'https://vfreis.github.io/vfr-portifolio/'
+          old_domain = 'viniciosfalqueiro.dev'
+          new_domain = 'vfreis.github.io/vfr-portifolio'
+
+          for path in Path('.').rglob('*'):
+              if not path.is_file() or '.git' in path.parts or path.name == 'CNAME':
+                  continue
+              try:
+                  text = path.read_text(encoding='utf-8')
+              except (UnicodeDecodeError, OSError):
+                  continue
+              updated = text.replace(old_url, new_url).replace(old_domain, new_domain)
+              updated = updated.replace(
+                  'The repository includes `CNAME` with `vfreis.github.io/vfr-portifolio`, and canonical/Open Graph/JSON-LD metadata are aligned with the production domain.',
+                  'No custom domain is configured. Canonical/Open Graph/JSON-LD metadata are aligned with the native GitHub Pages URL.',
+              )
+              if updated != text:
+                  path.write_text(updated, encoding='utf-8')
+          PY
+          rm -f CNAME
+
+      - name: Validate native Pages URL
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          grep -Fq 'https://vfreis.github.io/vfr-portifolio/' index.html
+          ! grep -R --exclude-dir=.git -Fq 'viniciosfalqueiro.dev' .
+          test ! -e CNAME
+          python scripts/validate_site.py
+          node --check js/app.js
+          node --check js/analytics.js
+
+      - name: Commit URL switch
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -A
+          if git diff --cached --quiet; then
+            echo 'No changes required.'
+            exit 0
+          fi
+          git commit -m 'fix: use native GitHub Pages URL'
+          git push origin HEAD:main
