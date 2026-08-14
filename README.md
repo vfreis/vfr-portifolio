@@ -105,11 +105,11 @@ Production is deployed with **GitHub Pages using GitHub Actions**.
 
 The Pages workflow validates the site, uploads the static repository and deploys it with no compilation stage.
 
-Production domain:
+Production URL:
 
-`https://viniciosfalqueiro.dev/`
+`https://vfreis.github.io/vfr-portifolio/`
 
-The repository includes `CNAME` with `viniciosfalqueiro.dev`, and canonical/Open Graph/JSON-LD metadata are aligned with the production domain.
+No custom domain is configured. Canonical/Open Graph/JSON-LD metadata are aligned with the native GitHub Pages URL.
 
 GitHub Pages remains the hosting layer and deployments are generated from `main`.
 
