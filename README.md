@@ -101,22 +101,17 @@ CI verifies:
 
 ## Deployment
 
-Target: **GitHub Pages using GitHub Actions**.
+Production is deployed with **GitHub Pages using GitHub Actions**.
 
 The Pages workflow validates the site, uploads the static repository and deploys it with no compilation stage.
 
-Canonical deployment URL prepared in metadata:
+Production domain:
 
-`https://vfreis.github.io/vfr-portifolio/`
+`https://viniciosfalqueiro.dev/`
 
-### Custom domain
+The repository includes `CNAME` with `viniciosfalqueiro.dev`, and canonical/Open Graph/JSON-LD metadata are aligned with the production domain.
 
-The code is ready for a custom domain, but a `CNAME` is intentionally not committed until a domain actually owned by the user is selected. After that, deployment only requires:
-
-1. add the domain to GitHub Pages;
-2. configure the required DNS records;
-3. commit a `CNAME` file containing the exact domain;
-4. update canonical/Open Graph URLs to the custom domain.
+GitHub Pages remains the hosting layer and deployments are generated from `main`.
 
 ## Contact
 
