@@ -26,7 +26,22 @@ jobs:
         run: python scripts/validate_site.py
 
       - name: Validate JavaScript syntax
-        run: node --check js/app.js
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          node --check js/app.js
+          node --check js/analytics.js
+
+      - name: Validate recruiter conversion assets
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          test -s assets/social-card.svg
+          test -s css/case-studies.css
+          grep -Fq 'Why hire me' index.html
+          grep -Fq 'Interactive architecture' index.html
+          grep -Fq 'PORTFOLIO_ANALYTICS_ENDPOINT' js/analytics.js
+          grep -Fq 'https://vfreis.github.io/vfr-portifolio/' index.html
 
       - name: Smoke test static entrypoints
         shell: bash
@@ -42,4 +57,6 @@ jobs:
           curl --fail --silent http://127.0.0.1:8000/index.html | grep -Fq 'Vinicios Falqueiro Reis'
           curl --fail --silent http://127.0.0.1:8000/resume/index.html | grep -Fq 'Professional Summary'
           curl --fail --silent http://127.0.0.1:8000/js/app.js >/dev/null
-          curl --fail --silent http://127.0.0.1:8000/css/layout.css >/dev/null
+          curl --fail --silent http://127.0.0.1:8000/js/analytics.js >/dev/null
+          curl --fail --silent http://127.0.0.1:8000/css/case-studies.css >/dev/null
+          curl --fail --silent http://127.0.0.1:8000/assets/social-card.svg >/dev/null
