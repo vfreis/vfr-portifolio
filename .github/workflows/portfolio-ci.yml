@@ -1,0 +1,67 @@
+name: Portfolio CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - portfolio-2-0-foundation
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate pure static site structure
+        run: python scripts/validate_site.py
+
+      - name: Validate JavaScript syntax
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          node --check js/app.js
+          node --check js/analytics.js
+
+      - name: Validate recruiter conversion assets
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          test -s assets/social-card.svg
+          test -s css/case-studies.css
+          grep -Fq 'WHY HIRE ME' index.html
+          grep -Fq 'Interactive architecture' index.html
+          grep -Fq 'PORTFOLIO_ANALYTICS_ENDPOINT' js/analytics.js
+          grep -Fq 'https://vfreis.github.io/vfr-portifolio/' index.html
+
+      - name: Smoke test static entrypoints
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python -m http.server 8000 --bind 127.0.0.1 >/tmp/portfolio-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill ${SERVER_PID} 2>/dev/null || true' EXIT
+          for i in $(seq 1 20); do
+            if curl --fail --silent http://127.0.0.1:8000/index.html -o /tmp/portfolio-index.html; then break; fi
+            sleep 0.25
+          done
+          curl --fail --silent http://127.0.0.1:8000/resume/index.html -o /tmp/portfolio-resume.html
+          curl --fail --silent http://127.0.0.1:8000/js/app.js -o /tmp/portfolio-app.js
+          curl --fail --silent http://127.0.0.1:8000/js/analytics.js -o /tmp/portfolio-analytics.js
+          curl --fail --silent http://127.0.0.1:8000/css/case-studies.css -o /tmp/portfolio-cases.css
+          curl --fail --silent http://127.0.0.1:8000/assets/social-card.svg -o /tmp/portfolio-social.svg
+          grep -Fq 'Vinicios Falqueiro Reis' /tmp/portfolio-index.html
+          grep -Fq 'Professional Summary' /tmp/portfolio-resume.html
+          test -s /tmp/portfolio-app.js
+          test -s /tmp/portfolio-analytics.js
+          test -s /tmp/portfolio-cases.css
+          test -s /tmp/portfolio-social.svg

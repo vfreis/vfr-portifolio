@@ -1,0 +1,77 @@
+name: Deploy Portfolio to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Validate pure static site
+        run: python scripts/validate_site.py
+      - name: Validate JavaScript syntax
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          node --check js/app.js
+          node --check js/analytics.js
+      - name: Static HTTP smoke test
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          python -m http.server 8000 --bind 127.0.0.1 >/tmp/portfolio-http.log 2>&1 &
+          SERVER_PID=$!
+          trap 'kill ${SERVER_PID} 2>/dev/null || true' EXIT
+          for i in $(seq 1 20); do
+            if curl --fail --silent http://127.0.0.1:8000/index.html -o /tmp/portfolio-index.html; then break; fi
+            sleep 0.25
+          done
+          curl --fail --silent http://127.0.0.1:8000/resume/index.html -o /tmp/portfolio-resume.html
+          curl --fail --silent http://127.0.0.1:8000/js/app.js -o /tmp/portfolio-app.js
+          curl --fail --silent http://127.0.0.1:8000/js/analytics.js -o /tmp/portfolio-analytics.js
+          curl --fail --silent http://127.0.0.1:8000/css/case-studies.css -o /tmp/portfolio-cases.css
+          curl --fail --silent http://127.0.0.1:8000/assets/social-card.svg -o /tmp/portfolio-social.svg
+          grep -Fq 'Vinicios Falqueiro Reis' /tmp/portfolio-index.html
+          grep -Fq 'WHY HIRE ME' /tmp/portfolio-index.html
+          grep -Fq 'Professional Summary' /tmp/portfolio-resume.html
+          test -s /tmp/portfolio-app.js
+          test -s /tmp/portfolio-analytics.js
+          test -s /tmp/portfolio-cases.css
+          test -s /tmp/portfolio-social.svg
+
+  deploy:
+    needs: validate
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+      - name: Upload static artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
