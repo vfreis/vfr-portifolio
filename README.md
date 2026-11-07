@@ -107,7 +107,7 @@ The Pages workflow validates the site, uploads the static repository and deploys
 
 Production URL:
 
-`https://vfreis.github.io/vfr-portifolio/`
+`https://slateblue-gnat-482045.hostingersite.com/`
 
 No custom domain is configured. Canonical/Open Graph/JSON-LD metadata are aligned with the native GitHub Pages URL.
 
