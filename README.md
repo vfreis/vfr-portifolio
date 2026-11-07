@@ -88,7 +88,7 @@ node --check js/app.js
 node --check js/analytics.js
 ```
 
-CI verifies:
+The validation script and intended CI checks cover:
 
 - pure static entrypoints;
 - no Liquid/Jekyll template syntax;
@@ -101,17 +101,15 @@ CI verifies:
 
 ## Deployment
 
-Production is deployed with **GitHub Pages using GitHub Actions**.
-
-The Pages workflow validates the site, uploads the static repository and deploys it with no compilation stage.
+The public static portfolio is hosted on **Hostinger Business Hosting**, deployed directly from the public GitHub repository branch `main` through Hostinger's Git integration. No GitHub Actions runner is required for this hosting path.
 
 Production URL:
 
 `https://slateblue-gnat-482045.hostingersite.com/`
 
-No custom domain is configured. Canonical/Open Graph/JSON-LD metadata are aligned with the native GitHub Pages URL.
+The Hostinger subdomain is a temporary public address until a branded domain is configured. Canonical/Open Graph/JSON-LD metadata point to the current live website.
 
-GitHub Pages remains the hosting layer and deployments are generated from `main`.
+Legacy GitHub Pages Actions workflows remain in `.github/workflows` but are not part of the active deployment route and have failed because of a GitHub account billing lock. Changes should be checked locally or independently before updating `main`.
 
 ## Contact
 
